@@ -10,19 +10,18 @@ class Usuarios(db.Model):
     __tablename__ = "usuarios"
     id = mapped_column(Integer, primary_key=True)
     nombre = mapped_column(String(50))
-    correo = mapped_column(String(100), nullable=False, unique = True)  
+    correo = mapped_column(String(100), nullable=False)  
     contrasena = mapped_column(String(20), nullable=False)
     suscripcion = mapped_column(String(10))
-    favoritos: Mapped[List["Favoritos"]] = relationship()
+    favoritos: Mapped[List["Favoritos"]]= relationship()
 
-    # def __repr__(self):
-    #     return '<Usuarios %r>' % self.username
-    # def serialize(self):
-    #     return {
-    #         "id": self.id,
-    #         "email": self.email,
-    #         # do not serialize the password, its a security breach
-    #     }
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "correo": self.correo
+            # do not serialize the password, its a security breach
+        }
 
 class Planetas(db.Model):
     __tablename__ = "planetas"
@@ -31,6 +30,13 @@ class Planetas(db.Model):
     poblacion = mapped_column(String(20), nullable=False)
     extension = mapped_column(String(10), nullable=False)
     favoritos: Mapped[List["Favoritos"]] = relationship()
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre_planeta": self.nombre_planeta
+            # do not serialize the password, its a security breach
+        }
 
 class Personajes(db.Model):
     __tablename__ = "personajes"
@@ -41,6 +47,14 @@ class Personajes(db.Model):
     altura_de = mapped_column(String(10), nullable=False)
     favoritos: Mapped[List["Favoritos"]] = relationship()
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre_personaje": self.nombre_personaje
+            # do not serialize the password, its a security breach
+        }
+
+
 class Favoritos(db.Model):
     __tablename__ = "favoritos"
     id = mapped_column(Integer, primary_key=True)
@@ -48,8 +62,15 @@ class Favoritos(db.Model):
     planetas_id: Mapped[int] = mapped_column(ForeignKey("planetas.id"))
     personajes_id: Mapped[int] = mapped_column(ForeignKey("personajes.id"))
 
+    def serialize(self):
+        return {
+            "id": self.id
+            # do not serialize the password, its a security breach
+        }
 
-    
+
+
+
 # from flask_sqlalchemy import SQLAlchemy
 # db = SQLAlchemy()
 # class User(db.Model):

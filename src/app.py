@@ -36,15 +36,32 @@ def sitemap():
 
 @app.route('/usuarios', methods=['GET'])
 def handle_hello():
+
     data = db.session.scalars(select(Usuarios)).all()
-    print(data)
-    # results = list(map(lambda item: item.serialize(),data))
+    results = list(map(lambda item: item.serialize(),data))
+    print(results)
+    
 
 
     response_body = {
-        "msg": "Hello, this is your GET /user response "
+
+        "msg": "Hello, this is your GET /user response ",
+        "results": results
     }
     return jsonify(response_body), 200
+
+@app.route('/usuario/<int:id>', methods=['GET'])
+def traer_usuario(id):
+
+    usuario = db.session.execute(select(Usuarios).filter_by(id=id)).scalar_one()     
+
+    response_body = {
+        "msg": "Hello, this is your GET /user response ",
+        "result":usuario.serialize()
+    }
+
+    return jsonify(response_body), 200
+
 # @app.route('/personajes', methods=['GET'])
 # def get_personajes():
 #     response_body = {
@@ -52,6 +69,7 @@ def handle_hello():
 #     }
     return jsonify(response_body), 200
 # this only runs if `$ python src/app.py` is executed
+
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)
